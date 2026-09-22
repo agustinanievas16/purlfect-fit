@@ -88,10 +88,14 @@ const server = createServer(async (request, response) => {
       return;
     }
 
-    if (request.method === "GET" && publicFiles.has(request.url ?? "")) {
-      const [fileName, contentType] = publicFiles.get(request.url ?? "")!;
+    const publicPath = request.url?.split("?")[0] ?? "";
+    if (request.method === "GET" && publicFiles.has(publicPath)) {
+      const [fileName, contentType] = publicFiles.get(publicPath)!;
       const content = await readFile(new URL(`../public/${fileName}`, import.meta.url));
-      response.writeHead(200, { "content-type": contentType });
+      response.writeHead(200, {
+        "content-type": contentType,
+        "cache-control": "no-store",
+      });
       response.end(content);
       return;
     }
