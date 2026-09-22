@@ -5,6 +5,8 @@ const formError = document.querySelector("#form-error");
 const feedbackMessage = document.querySelector("#feedback-message");
 let currentAttempt;
 
+window.addEventListener("pageshow", () => sizingForm.reset());
+
 const number = (data, name) => Number(data.get(name));
 const format = (value) => new Intl.NumberFormat("es-AR", { maximumFractionDigits: 3 }).format(value);
 const escapeHtml = (value) => String(value).replace(
