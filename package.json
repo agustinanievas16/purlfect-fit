@@ -1,0 +1,9 @@
+{
+  "name": "knitwear-sizing",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "demo": "node src/demo.ts",
+    "test": "node --test src/raglan.test.ts"
+  }
+}
