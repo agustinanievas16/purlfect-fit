@@ -20,6 +20,48 @@ main { display: grid; gap: 20px; padding-bottom: 64px; }
 section + section { margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--line); }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
 label { display: grid; gap: 7px; font-size: .88rem; font-weight: 650; }
+.grid label { display: block; }
+.grid label > input { margin-top: 7px; }
+.help {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  margin-left: 3px;
+  border: 1px solid #aa9587;
+  border-radius: 50%;
+  color: var(--accent);
+  font-size: .72rem;
+  line-height: 1;
+  cursor: help;
+}
+.help::after {
+  content: attr(aria-label);
+  position: absolute;
+  z-index: 10;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  width: max-content;
+  max-width: min(260px, calc(100vw - 48px));
+  padding: 9px 11px;
+  border-radius: 8px;
+  background: #352a24;
+  color: white;
+  box-shadow: 0 5px 16px rgb(41 35 31 / 20%);
+  font-size: .76rem;
+  font-weight: 500;
+  line-height: 1.35;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 4px);
+  transition: opacity .15s, transform .15s;
+}
+.help:hover::after, .help:focus::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.help:focus { outline: 3px solid rgb(118 83 65 / 18%); }
 input, select, textarea { width: 100%; border: 1px solid #cdbfb3; border-radius: 9px; padding: 11px 12px; background: white; color: inherit; font: inherit; }
 input:focus, select:focus, textarea:focus { outline: 3px solid rgb(118 83 65 / 18%); border-color: var(--accent); }
 button { border: 0; border-radius: 999px; padding: 12px 20px; background: var(--accent); color: white; font: inherit; font-weight: 700; cursor: pointer; }
