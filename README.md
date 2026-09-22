@@ -85,7 +85,6 @@ npm test
     "finishedNeckCircumferenceCm": 40,
     "castOnMultiple": 4,
     "raglanLineStitchesEach": 1,
-    "increaseEveryRounds": 2,
     "underarmRange": { "minimum": 0, "maximum": 10 }
   }
 }
@@ -97,7 +96,7 @@ Then run:
 npm run cli < case.json
 ```
 
-The CLI emits a sizing attempt: its input, computed target, proposal, and signed measurement deviations. Positive deviations are larger or longer than the target; negative deviations are smaller or shorter. The proposal and deviations are `null` when neckline multiple, tolerance, yoke rhythm, or underarm constraints cannot produce a compatible construction. Invalid inputs exit with an error.
+The CLI emits a sizing attempt: its input, computed target, proposal (including the proposed increase cadence), and signed measurement deviations. Positive deviations are larger or longer than the target; negative deviations are smaller or shorter. The proposal and deviations are `null` when neckline multiple, tolerance, yoke rhythm, or underarm constraints cannot produce a compatible construction. Invalid inputs exit with an error.
 
 `npm run demo` remains available as a small executable example with hard-coded values.
 

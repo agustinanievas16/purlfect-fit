@@ -112,18 +112,18 @@ test("proposes the construction that meets body, sleeve, and yoke targets", () =
     gauge: { stitchesPer10Cm: 20, rowsPer10Cm: 25 },
     castOnStitches: 80,
     initialSleeveStitches: 10,
-    increaseEveryRounds: 2,
     underarmRange: { minimum: 0, maximum: 10 },
     target: {
       bodyCircumferenceCm: 76,
       sleeveCircumferenceCm: 28,
-      yokeDepthCm: 16,
+      yokeDepthCm: 24,
       toleranceCm: 0.1,
     },
   });
 
   assert.deepEqual(proposal, {
     increaseEvents: 20,
+    increaseEveryRounds: 3,
     underarmStitches: 6,
     result: {
       yokeStitches: 240,
@@ -131,7 +131,7 @@ test("proposes the construction that meets body, sleeve, and yoke targets", () =
       sleeveStartStitches: 56,
       bodyCircumferenceCm: 76,
       sleeveCircumferenceCm: 28,
-      yokeDepthCm: 16,
+      yokeDepthCm: 24,
     },
   });
 });
@@ -142,7 +142,6 @@ test("proposes cast-on and initial sections from the neckline design", () => {
     finishedNeckCircumferenceCm: 40,
     castOnMultiple: 4,
     raglanLineStitchesEach: 1,
-    increaseEveryRounds: 2,
     underarmRange: { minimum: 0, maximum: 10 },
     target: {
       bodyCircumferenceCm: 76,
@@ -160,6 +159,7 @@ test("proposes cast-on and initial sections from the neckline design", () => {
     raglanLineStitchesEach: 1,
     neckCircumferenceCm: 40,
     increaseEvents: 20,
+    increaseEveryRounds: 2,
     underarmStitches: 6,
     result: {
       yokeStitches: 240,
@@ -178,7 +178,6 @@ test("returns no design when the cast-on multiple exceeds neck tolerance", () =>
     finishedNeckCircumferenceCm: 41,
     castOnMultiple: 4,
     raglanLineStitchesEach: 1,
-    increaseEveryRounds: 2,
     underarmRange: { minimum: 0, maximum: 10 },
     target: {
       bodyCircumferenceCm: 76,
@@ -196,7 +195,6 @@ test("reconstructs the published size A measurements of the reference raglan", (
     gauge: { stitchesPer10Cm: 16, rowsPer10Cm: 20 },
     castOnStitches: 64,
     initialSleeveStitches: 6,
-    increaseEveryRounds: 2,
     underarmRange: { minimum: 4, maximum: 4 },
     target: {
       bodyCircumferenceCm: 90,
@@ -208,6 +206,7 @@ test("reconstructs the published size A measurements of the reference raglan", (
 
   assert.deepEqual(proposal, {
     increaseEvents: 21,
+    increaseEveryRounds: 2,
     underarmStitches: 4,
     result: {
       yokeStitches: 232,
@@ -225,7 +224,6 @@ test("returns no proposal when the permitted underarm range cannot meet the targ
     gauge: { stitchesPer10Cm: 20, rowsPer10Cm: 25 },
     castOnStitches: 80,
     initialSleeveStitches: 10,
-    increaseEveryRounds: 2,
     underarmRange: { minimum: 0, maximum: 2 },
     target: {
       bodyCircumferenceCm: 76,

@@ -59,13 +59,13 @@ export type ClassicRaglanProposalInput = {
   gauge: Gauge;
   castOnStitches: number;
   initialSleeveStitches: number;
-  increaseEveryRounds: number;
   underarmRange: { minimum: number; maximum: number };
   target: ClassicRaglanTarget;
 };
 
 export type ClassicRaglanProposal = {
   increaseEvents: number;
+  increaseEveryRounds: number;
   underarmStitches: number;
   result: ClassicRaglanResult;
 };
@@ -75,7 +75,6 @@ export type ClassicRaglanDesignInput = {
   finishedNeckCircumferenceCm: number;
   castOnMultiple: number;
   raglanLineStitchesEach: number;
-  increaseEveryRounds: number;
   underarmRange: { minimum: number; maximum: number };
   target: ClassicRaglanTarget;
 };
@@ -208,7 +207,6 @@ export function proposeClassicRaglan(
   positiveInteger(input.gauge.rowsPer10Cm, "rowsPer10Cm");
   positiveInteger(input.castOnStitches, "castOnStitches");
   positiveInteger(input.initialSleeveStitches, "initialSleeveStitches");
-  positiveInteger(input.increaseEveryRounds, "increaseEveryRounds");
   nonNegativeInteger(input.underarmRange.minimum, "underarmRange.minimum");
   nonNegativeInteger(input.underarmRange.maximum, "underarmRange.maximum");
   positiveNumber(input.target.bodyCircumferenceCm, "target.bodyCircumferenceCm");
@@ -223,47 +221,62 @@ export function proposeClassicRaglan(
   const maxIncreaseEvents = Math.floor(
     ((input.target.yokeDepthCm + input.target.toleranceCm) *
       input.gauge.rowsPer10Cm) /
-      (10 * input.increaseEveryRounds),
+      10,
   );
+  const targetYokeRounds =
+    (input.target.yokeDepthCm * input.gauge.rowsPer10Cm) / 10;
   let best: ClassicRaglanProposal | undefined;
   let bestDeviation = Infinity;
 
   // ponytail: exhaustive search is enough for the small MVP range; optimize only if real inputs prove it slow.
   for (let increaseEvents = 1; increaseEvents <= maxIncreaseEvents; increaseEvents += 1) {
     const heldSleeveStitches = input.initialSleeveStitches + increaseEvents * 2;
+    const increaseCadences = new Set([
+      Math.floor(targetYokeRounds / increaseEvents),
+      Math.ceil(targetYokeRounds / increaseEvents),
+    ]);
 
-    for (
-      let underarmStitches = input.underarmRange.minimum;
-      underarmStitches <= input.underarmRange.maximum;
-      underarmStitches += 1
-    ) {
-      const result = calculateClassicRaglan({
-        gauge: input.gauge,
-        castOnStitches: input.castOnStitches,
-        increaseEvents,
-        heldSleeveStitches,
-        underarmStitches,
-        yokeRounds: increaseEvents * input.increaseEveryRounds,
-      });
-      const bodyDeviation = Math.abs(
-        result.bodyCircumferenceCm - input.target.bodyCircumferenceCm,
-      );
-      const sleeveDeviation = Math.abs(
-        result.sleeveCircumferenceCm - input.target.sleeveCircumferenceCm,
-      );
-      const yokeDeviation = Math.abs(
-        result.yokeDepthCm - input.target.yokeDepthCm,
-      );
-      const totalDeviation = bodyDeviation + sleeveDeviation + yokeDeviation;
+    for (const increaseEveryRounds of increaseCadences) {
+      if (increaseEveryRounds < 1) continue;
 
-      if (
-        bodyDeviation <= input.target.toleranceCm &&
-        sleeveDeviation <= input.target.toleranceCm &&
-        yokeDeviation <= input.target.toleranceCm &&
-        totalDeviation < bestDeviation
+      for (
+        let underarmStitches = input.underarmRange.minimum;
+        underarmStitches <= input.underarmRange.maximum;
+        underarmStitches += 1
       ) {
-        best = { increaseEvents, underarmStitches, result };
-        bestDeviation = totalDeviation;
+        const result = calculateClassicRaglan({
+          gauge: input.gauge,
+          castOnStitches: input.castOnStitches,
+          increaseEvents,
+          heldSleeveStitches,
+          underarmStitches,
+          yokeRounds: increaseEvents * increaseEveryRounds,
+        });
+        const bodyDeviation = Math.abs(
+          result.bodyCircumferenceCm - input.target.bodyCircumferenceCm,
+        );
+        const sleeveDeviation = Math.abs(
+          result.sleeveCircumferenceCm - input.target.sleeveCircumferenceCm,
+        );
+        const yokeDeviation = Math.abs(
+          result.yokeDepthCm - input.target.yokeDepthCm,
+        );
+        const totalDeviation = bodyDeviation + sleeveDeviation + yokeDeviation;
+
+        if (
+          bodyDeviation <= input.target.toleranceCm &&
+          sleeveDeviation <= input.target.toleranceCm &&
+          yokeDeviation <= input.target.toleranceCm &&
+          totalDeviation < bestDeviation
+        ) {
+          best = {
+            increaseEvents,
+            increaseEveryRounds,
+            underarmStitches,
+            result,
+          };
+          bestDeviation = totalDeviation;
+        }
       }
     }
   }
@@ -285,7 +298,6 @@ export function proposeClassicRaglanDesign(
     input.raglanLineStitchesEach,
     "raglanLineStitchesEach",
   );
-  positiveInteger(input.increaseEveryRounds, "increaseEveryRounds");
   nonNegativeInteger(input.underarmRange.minimum, "underarmRange.minimum");
   nonNegativeInteger(input.underarmRange.maximum, "underarmRange.maximum");
   positiveNumber(input.target.bodyCircumferenceCm, "target.bodyCircumferenceCm");
@@ -340,7 +352,6 @@ export function proposeClassicRaglanDesign(
         gauge: input.gauge,
         castOnStitches,
         initialSleeveStitches,
-        increaseEveryRounds: input.increaseEveryRounds,
         underarmRange: input.underarmRange,
         target: input.target,
       });

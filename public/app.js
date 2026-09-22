@@ -36,7 +36,6 @@ function buildInput(data) {
       finishedNeckCircumferenceCm: number(data, "neckCircumference"),
       castOnMultiple: number(data, "castOnMultiple"),
       raglanLineStitchesEach: number(data, "raglanLineStitches"),
-      increaseEveryRounds: number(data, "increaseEvery"),
       underarmRange: {
         minimum: number(data, "underarmMin"),
         maximum: number(data, "underarmMax"),
@@ -65,6 +64,7 @@ function renderAttempt(attempt) {
         <div class="metric"><span>Puntos iniciales por manga</span><strong>${proposal.initialSleeveStitchesEach}</strong></div>
         <div class="metric"><span>Puntos por línea de raglán</span><strong>${proposal.raglanLineStitchesEach}</strong></div>
         <div class="metric"><span>Eventos de aumento</span><strong>${proposal.increaseEvents}</strong></div>
+        <div class="metric"><span>Aumentar cada</span><strong>${proposal.increaseEveryRounds} vueltas</strong></div>
         <div class="metric"><span>Puntos bajo cada axila</span><strong>${proposal.underarmStitches}</strong></div>
       </div>`;
   }

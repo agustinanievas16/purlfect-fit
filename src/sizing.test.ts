@@ -38,7 +38,6 @@ test("the form defaults reconstruct published size A from the reference pattern"
       finishedNeckCircumferenceCm: defaultFormNumber("neckCircumference"),
       castOnMultiple: defaultFormNumber("castOnMultiple"),
       raglanLineStitchesEach: defaultFormNumber("raglanLineStitches"),
-      increaseEveryRounds: defaultFormNumber("increaseEvery"),
       underarmRange: {
         minimum: defaultFormNumber("underarmMin"),
         maximum: defaultFormNumber("underarmMax"),
@@ -53,6 +52,7 @@ test("the form defaults reconstruct published size A from the reference pattern"
   assert.equal(attempt.proposal?.initialBackStitches, 22);
   assert.equal(attempt.proposal?.initialSleeveStitchesEach, 6);
   assert.equal(attempt.proposal?.increaseEvents, 21);
+  assert.equal(attempt.proposal?.increaseEveryRounds, 2);
   assert.equal(attempt.proposal?.underarmStitches, 4);
   assert.deepEqual(attempt.deviations, {
     neckCircumferenceCm: 0,
@@ -77,7 +77,6 @@ test("reports signed measurement deviations in centimetres", () => {
       finishedNeckCircumferenceCm: 40.2,
       castOnMultiple: 4,
       raglanLineStitchesEach: 1,
-      increaseEveryRounds: 2,
       underarmRange: { minimum: 0, maximum: 10 },
     },
   });

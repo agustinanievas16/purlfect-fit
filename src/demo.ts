@@ -14,7 +14,6 @@ const attempt = createSizingAttempt({
     finishedNeckCircumferenceCm: 40,
     castOnMultiple: 4,
     raglanLineStitchesEach: 1,
-    increaseEveryRounds: 2,
     underarmRange: { minimum: 0, maximum: 10 },
   },
 });
