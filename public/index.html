@@ -17,12 +17,12 @@
       <form id="sizing-form" class="panel">
         <section>
           <h2>Talle y medidas</h2>
-          <p>Los valores iniciales reconstruyen el talle A del patrón de referencia.</p>
+          <p>Completá las medidas corporales y la holgura deseada para calcular las medidas terminadas.</p>
           <div class="grid">
-            <label>Talle <span class="help" tabindex="0" aria-label="Nombre con el que identificás esta prueba. No modifica el cálculo.">?</span><input name="sizeLabel" value="A — patrón de referencia" required /></label>
-            <label>Busto/pecho corporal (cm) <span class="help" tabindex="0" aria-label="Contorno del cuerpo medido sin agregar holgura. En el ejemplo se deriva como 90 cm terminados menos los 15 cm de holgura recomendados por el patrón.">?</span><input name="bust" type="number" step="0.1" value="75" required /></label>
-            <label>Bíceps corporal (cm) <span class="help" tabindex="0" aria-label="Contorno de la parte más ancha del brazo, medido sin holgura. El patrón de referencia no publica esta medida corporal: el ejemplo usa directamente sus 32,5 cm terminados y deja la holgura en cero.">?</span><input name="bicep" type="number" step="0.1" value="32.5" required /></label>
-            <label>Profundidad de sisa (cm) <span class="help" tabindex="0" aria-label="Distancia vertical corporal desde el hombro hasta el nivel de la axila. El patrón de referencia no publica esta medida corporal: el ejemplo usa directamente los 21 cm del canesú y deja la holgura en cero.">?</span><input name="armhole" type="number" step="0.1" value="21" required /></label>
+            <label>Talle <span class="help" tabindex="0" aria-label="Nombre o código con el que querés identificar el talle. No modifica el cálculo.">?</span><input name="sizeLabel" value="A" required /></label>
+            <label>Busto/pecho corporal (cm) <span class="help" tabindex="0" aria-label="Contorno del cuerpo a la altura del busto o pecho, medido sin agregar holgura. La holgura se ingresa por separado.">?</span><input name="bust" type="number" step="0.1" value="75" required /></label>
+            <label>Bíceps corporal (cm) <span class="help" tabindex="0" aria-label="Contorno de la parte más ancha del brazo, medido sin agregar holgura.">?</span><input name="bicep" type="number" step="0.1" value="32.5" required /></label>
+            <label>Profundidad de sisa (cm) <span class="help" tabindex="0" aria-label="Distancia vertical desde la parte superior del hombro hasta el nivel de la axila, medida sobre el cuerpo.">?</span><input name="armhole" type="number" step="0.1" value="21" required /></label>
           </div>
         </section>
 

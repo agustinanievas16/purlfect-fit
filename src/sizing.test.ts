@@ -46,7 +46,7 @@ test("the form defaults reconstruct published size A from the reference pattern"
     },
   });
 
-  assert.equal(attempt.input.sizeLabel, "A — patrón de referencia");
+  assert.equal(attempt.input.sizeLabel, "A");
   assert.equal(attempt.target.bodyCircumferenceCm, 90);
   assert.equal(attempt.proposal?.castOnStitches, 64);
   assert.equal(attempt.proposal?.initialFrontStitches, 22);
