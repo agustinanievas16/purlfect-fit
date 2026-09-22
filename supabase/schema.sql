@@ -7,7 +7,7 @@ create table if not exists public.sizing_feedback (
   target jsonb not null,
   proposal jsonb,
   deviations jsonb,
-  feedback_status text not null check (
+  feedback_status text check (
     feedback_status in ('accepted', 'needs-adjustment', 'rejected')
   ),
   feedback_focus text[] not null default '{}',
@@ -15,6 +15,7 @@ create table if not exists public.sizing_feedback (
 );
 
 alter table public.sizing_feedback enable row level security;
+alter table public.sizing_feedback alter column feedback_status drop not null;
 
 revoke all on table public.sizing_feedback from anon, authenticated;
-grant insert, select on table public.sizing_feedback to service_role;
+grant insert, select, update on table public.sizing_feedback to service_role;

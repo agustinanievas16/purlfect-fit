@@ -78,6 +78,9 @@ sizingForm.addEventListener("submit", async (event) => {
     if (!response.ok) throw new Error(data.error);
     currentAttempt = data;
     renderAttempt(data);
+    if (!data.saved) {
+      formError.textContent = "La propuesta se calculó, pero este intento no pudo guardarse.";
+    }
   } catch (error) {
     formError.textContent = error.message ?? "No se pudo calcular la propuesta.";
   }
@@ -96,6 +99,7 @@ feedbackForm.addEventListener("submit", async (event) => {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
+        attemptId: currentAttempt.attemptId,
         input: currentAttempt.input,
         feedback: {
           status: data.get("status"),
@@ -108,7 +112,7 @@ feedbackForm.addEventListener("submit", async (event) => {
     if (!response.ok) throw new Error(saved.error);
 
     feedbackMessage.className = "success";
-    feedbackMessage.textContent = "Feedback guardado. Ya está disponible para el equipo.";
+    feedbackMessage.textContent = "Comentarios enviados!";
     feedbackForm.reset();
   } catch (error) {
     feedbackMessage.className = "error";

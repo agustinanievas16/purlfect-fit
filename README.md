@@ -21,7 +21,7 @@ The goal is to make those decisions explicit, reproducible, and inspectable befo
 - Searches for a compatible number of joint raglan increase events and underarm cast-on stitches.
 - Reports signed centimetre deviations between the proposal and each target measurement.
 - Returns `null` when the defined construction constraints cannot meet the target.
-- Captures structured tester feedback in a private Supabase table.
+- Saves every sizing attempt and attaches structured tester feedback to the same Supabase row.
 - Uses Node's built-in test runner and no external runtime dependencies.
 
 ## Domain model
@@ -127,6 +127,8 @@ The current deployment target is a Render web service backed by Supabase Postgre
 4. Open the deployed URL, calculate a proposal, and save one test response. Its row should appear in the `sizing_feedback` table in Supabase.
 
 Each saved row records the algorithm version, original sizing input, server-computed target and proposal, deviations, and tester feedback. The server recomputes the attempt before saving it instead of trusting calculated output from the browser.
+
+Existing deployments created before attempts were saved automatically must run [`supabase/migrations/001-save-attempts-before-feedback.sql`](supabase/migrations/001-save-attempts-before-feedback.sql) once in the Supabase SQL editor. This allows an attempt to exist before optional feedback is submitted.
 
 ## Roadmap
 

@@ -1,7 +1,11 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { readFile } from "node:fs/promises";
 
-import { parseSizingFeedback, saveSizingFeedback } from "./feedback.ts";
+import {
+  parseSizingFeedback,
+  saveSizingAttempt,
+  updateSizingFeedback,
+} from "./feedback.ts";
 import {
   createSizingAttempt,
   type ClassicRaglanSizeInput,
@@ -33,24 +37,42 @@ const server = createServer(async (request, response) => {
       const attempt = createSizingAttempt(
         await readJson<ClassicRaglanSizeInput>(request),
       );
+      let attemptId: string | null = null;
+      try {
+        attemptId = await saveSizingAttempt(attempt);
+      } catch (error) {
+        console.error(
+          "Could not save sizing attempt:",
+          error instanceof Error ? error.message : "Unknown storage error",
+        );
+      }
       sendJson(response, 200, {
         ...attempt,
         proposal: attempt.proposal ?? null,
         deviations: attempt.deviations ?? null,
+        attemptId,
+        saved: attemptId !== null,
       });
       return;
     }
 
     if (request.method === "POST" && request.url === "/api/feedback") {
       const submission = await readJson<{
+        attemptId?: unknown;
         input: ClassicRaglanSizeInput;
         feedback: unknown;
       }>(request);
-      const attempt = createSizingAttempt(submission.input);
       const feedback = parseSizingFeedback(submission.feedback);
 
       try {
-        await saveSizingFeedback(attempt, feedback);
+        if (typeof submission.attemptId === "string") {
+          await updateSizingFeedback(submission.attemptId, feedback);
+        } else {
+          await saveSizingAttempt(
+            createSizingAttempt(submission.input),
+            feedback,
+          );
+        }
       } catch (error) {
         console.error(
           "Could not save feedback:",
