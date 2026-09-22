@@ -63,9 +63,11 @@ El resultado debe conservar simetría izquierda/derecha, tener todos los conteos
 - **rango permitido**: el módulo busca un entero dentro de un mínimo/máximo y de los múltiplos requeridos;
 - **proponer dentro de restricciones**: el módulo elige el valor y explica por qué, pero sigue respetando mínimo, máximo, simetría y tolerancia de medida.
 
-## Extensión futura: fases independientes
+## Extensión de cálculo: fases independientes
 
-Un raglán compuesto puede sumar eventos solo-cuerpo o solo-manga después de una fase conjunta. Cuando se implemente, se usarán nombres explícitos: `N_c` para eventos conjuntos, `N_b` para eventos solo-cuerpo y `N_s` para eventos solo-manga. No forman parte del cálculo ni del caso de verdad inicial.
+Un raglán compuesto puede sumar eventos solo-cuerpo o solo-manga después de una fase conjunta. El calculador acepta conteos explícitos: `N_c` para eventos conjuntos, `N_b` para eventos solo-cuerpo y `N_s` para eventos solo-manga. Cada evento solo-cuerpo o solo-manga agrega cuatro puntos totales al canesú.
+
+Esta extensión verifica una construcción conocida, pero el solucionador automático todavía busca únicamente eventos conjuntos. Tampoco resuelve aún la formación del escote trabajada en plano ni los puntos nuevos montados al unirlo en redondo.
 
 ## Resultado por talle
 
@@ -84,3 +86,11 @@ Un raglán compuesto puede sumar eventos solo-cuerpo o solo-manga después de un
 2. el gauge de vueltas afecta la profundidad del canesú aunque el patrón tolere cierto margen.
 
 La futura prueba automatizada verificará relaciones matemáticas e invariantes contra datos extraídos de la referencia privada; no debe almacenar ni publicar instrucciones textuales del patrón.
+
+## Caso de verdad 02
+
+`CumulusBlouseONeck-PetiteKnit.pdf` confirma dos necesidades posteriores: una fase previa de formación de escote trabajada en plano y eventos solo-cuerpo en los talles mayores. El talle XL valida el cálculo compuesto con una fase conjunta seguida por dos eventos solo-cuerpo.
+
+## Caso de verdad 03
+
+`SweaterNo33-MFTK.pdf` confirma fases solo-cuerpo y líneas raglán anchas. También crea puntos adicionales al levantar cada manga; ese detalle queda registrado como una variación todavía no generalizada en el modelo.

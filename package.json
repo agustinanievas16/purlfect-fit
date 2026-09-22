@@ -3,7 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "start": "node --env-file-if-exists=.env src/server.ts",
+    "cli": "node src/cli.ts",
     "demo": "node src/demo.ts",
-    "test": "node --test src/raglan.test.ts"
+    "test": "node --test src/*.test.ts"
   }
 }

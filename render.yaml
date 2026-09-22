@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: purlfect-fit
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 22.22.1
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SECRET_KEY
+        sync: false
+      - key: TESTER_ACCESS_CODE
+        sync: false

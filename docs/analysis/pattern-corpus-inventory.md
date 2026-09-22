@@ -7,11 +7,11 @@
 | Patrón | Construcción | Rango declarado | Uso para el MVP |
 | --- | --- | --- | --- |
 | `SweaterNo9-MFTK.pdf` | Raglán top-down clásico, circular, cuello alto | 6 talles | **Caso de verdad inicial.** Construcción simple y holgura declarada. |
-| `CumulusBlouseONeck-PetiteKnit.pdf` | Raglán top-down, comienzo plano para formar escote y luego circular | 9 talles | Caso secundario: prueba de escote y rango mayor. |
+| `CumulusBlouseONeck-PetiteKnit.pdf` | Raglán top-down, comienzo plano para formar escote y luego circular | 9 talles | **Caso de verdad 02.** Confirma fases solo-cuerpo en talles mayores. |
 | `AmélieTee-PetiteKnit.pdf` | Raglán top-down, escote formado en plano y luego circular | 10 talles | Caso secundario de parte superior; es una remera, no un sweater. |
 | `KlaraBlouse-MariasVerden.pdf` | Raglán top-down | Varios talles | Caso a clasificar con más detalle al validar medidas. |
 | `KeySweater-PetiteKnit.pdf` | Raglán top-down con short rows y colorwork | 10 talles | Caso avanzado; fuera del primer solucionador por colorwork. |
-| `SweaterNo33-MFTK.pdf` | Raglán top-down con short rows y líneas de aumento no convencionales | 8 talles | Caso avanzado: demuestra que una plantilla no cubre todos los raglan. |
+| `SweaterNo33-MFTK.pdf` | Raglán top-down con short rows y líneas de aumento no convencionales | 8 talles | Caso exploratorio: evidencia una variación al recoger mangas. |
 | `StepByStepSweater-HandmadeByFlorence.pdf` | Raglán top-down clásico, circular y seamless | 7 talles | **Caso de verdad inicial recomendado.** Medidas terminadas, holgura, gauge y puntos bajo axila declarados con claridad. |
 
 ## Observaciones útiles
@@ -33,6 +33,22 @@ La planilla aporta una **tabla corporal** y una conversión inicial de centímet
 
 Se elige como primer caso porque es un sweater top-down de raglán convencional, seamless y de punto liso, con siete talles, holgura positiva explícita, gauge de puntos y vueltas, y puntos bajo axila especificados por talle. La primera verificación no será recrear su texto: será comprobar que, dados sus objetivos de prenda, gauge y restricciones estructurales, el solucionador produce conteos coherentes para cada talle y declara los redondeos o desvíos.
 
-## Próximo insumo necesario
+### Resultado de la primera verificación
 
-Para que un patrón sea un caso de verdad completo faltan, por talle, una tabla estructurada de: puntos de montaje, reparto inicial, vueltas y frecuencia de aumento, puntos al separar mangas, puntos bajo axila, puntos finales de cuerpo/manga y largos. Se puede extraer con cuidado del patrón elegido y contrastar primero con la persona diseñadora, sin incorporarlo como contenido distribuible en el producto.
+Los siete talles sin modelado de cuello reproducen exactamente los conteos publicados de canesú y cuerpo. El talle A queda como prueba automatizada representativa, sin reproducir las instrucciones del patrón.
+
+Al convertir los puntos de cuerpo con la muestra declarada, el talle A coincide con su contorno publicado y los otros seis resultan 2,5 cm mayores. Esto es compatible con que el patrón presenta esas medidas como aproximadas, pero demuestra que el producto debe diferenciar una medida nominal publicada de la medida calculada a partir de puntos y tensión.
+
+La opción con vueltas cortas llega a los mismos conteos finales, pero distribuye parte de los aumentos en filas parciales. El modelo actual puede verificar sus conteos, pero no debe afirmar todavía que reproduce su geometría o profundidad local de cuello.
+
+## Caso de verdad 02: Cumulus Blouse O-neck
+
+El patrón forma primero el escote trabajando en plano, agrega puntos de escote al unir en redondo y continúa con eventos conjuntos. En los talles XL a 5XL detiene el crecimiento de mangas y agrega una fase solo-cuerpo. El talle XL confirma exactamente los conteos de canesú, cuerpo y manga del nuevo calculador compuesto.
+
+Este caso no habilita todavía un solucionador compuesto: demuestra el cálculo de una secuencia conocida. Proponer automáticamente las fases requerirá modelar su orden, frecuencia y filas consumidas.
+
+## Caso exploratorio 03: Sweater No. 33
+
+Este patrón vuelve a usar eventos conjuntos seguidos por eventos solo-cuerpo en talles mayores, pero conserva líneas raglán anchas como parte visible de la prenda. Al comenzar cada manga crea además dos puntos de ajuste aparte de los puntos levantados bajo axila.
+
+El grupo bajo axila sigue siendo el mismo tramo físico compartido, pero los puntos extra alteran el inicio de la manga. Con una única evidencia donde permanecen después de la preparación, esta variación no se incorpora todavía a la interfaz general del modelo.

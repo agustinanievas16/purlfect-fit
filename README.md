@@ -1,75 +1,151 @@
 # Purlfect Fit
 
-Un proyecto de aprendizaje full-stack para ayudar a diseñadoras de patrones de tejido a proponer un rango de talles de manera trazable.
+Purlfect Fit is an early-stage public learning project for building traceable sizing proposals for hand-knit garments.
 
-## El problema
+It starts with a deliberately narrow and testable scope: classic seamless, top-down raglan sweaters.
 
-Graduar un patrón tejido a partir de un talle base suele implicar recalcular manualmente puntos, vueltas, aumentos y medidas para cada talle. Escalar todas las partes por igual no funciona: cuerpo, mangas, canesú, holgura y propiedades del tejido cambian de manera distinta.
+> **Project status:** experimental. The calculation core and the tester-facing web interface are under domain validation; this is not yet a source of publishable knitting instructions.
 
-Purlfect Fit comienza con un caso acotado y verificable: **sweaters raglán clásicos, seamless y top-down**.
+## Why this exists
 
-## Qué hace hoy
+Grading a hand-knit pattern from a base size often means manually recalculating stitches, rows, increases, and finished measurements for every size. A garment cannot be scaled uniformly: body, sleeves, yoke depth, ease, gauge, and construction constraints all interact.
 
-El núcleo actual puede:
+The goal is to make those decisions explicit, reproducible, and inspectable before building a user interface around them.
 
-- convertir una construcción raglán clásica en conteos y medidas resultantes;
-- proponer una combinación de eventos de aumento (`N`) y puntos bajo axila (`U`) que cumpla objetivos de cuerpo, manga y profundidad de canesú;
-- rechazar una propuesta cuando no existe una combinación compatible dentro de la tolerancia definida;
-- ejecutar pruebas con el runner nativo de Node, sin dependencias externas.
+## Current capabilities
 
-Todavía no es una aplicación web ni genera instrucciones publicables de tejido. El foco actual es validar el modelo de dominio antes de construir interfaz, persistencia o autenticación.
+- Calculates stitch counts and finished measurements for a classic top-down raglan construction.
+- Verifies known compound raglan constructions with joint, body-only, and sleeve-only increase events.
+- Groups a labelled size input, its body measurements, ease, gauge, and construction constraints.
+- Builds garment targets from body measurements and ease.
+- Searches for a compatible number of joint raglan increase events and underarm cast-on stitches.
+- Reports signed centimetre deviations between the proposal and each target measurement.
+- Returns `null` when the defined construction constraints cannot meet the target.
+- Captures structured tester feedback in a private Supabase table.
+- Uses Node's built-in test runner and no external runtime dependencies.
 
-## Modelo inicial
+## Domain model
 
-En el raglán clásico, cada evento de aumento conjunto agrega ocho puntos:
+A joint classic raglan increase event adds eight stitches:
 
 ```text
-4 puntos al cuerpo + 2 puntos a cada manga
+4 body stitches + 2 stitches per sleeve
 ```
 
-Al separar las mangas, los puntos bajo axila `U` contribuyen a ambas piezas:
+At sleeve separation, the same underarm cast-on value (`U`) contributes to both garment sections:
 
 ```text
-cuerpo: 2 × U
-cada manga: U
+body: 2 × U
+each sleeve: U
 ```
 
-El cálculo devuelve tanto los conteos enteros como sus centímetros resultantes, para hacer visible cualquier desvío respecto del objetivo de diseño.
+The solver returns integer stitch counts together with their centimetre equivalents, so the deviation from the intended finished measurements remains visible.
 
-## Ejecutar el proyecto
+## Requirements
 
-Requiere Node.js 22 o superior.
+- Node.js 22 or later
+
+## Quick start
+
+Clone the repository, then start the local web interface:
+
+```bash
+npm start
+```
+
+Open `http://localhost:3000`. No dependency installation is currently required. The calculator works without environment variables; saving feedback requires the database configuration described below.
+
+Run the test suite with:
 
 ```bash
 npm test
-npm run demo
 ```
 
-`npm run demo` ejecuta una propuesta de ejemplo y muestra el resultado como JSON. Podés cambiar los valores de [src/demo.ts](src/demo.ts) para observar cómo interactúan las medidas objetivo, la muestra y las restricciones de construcción.
+## Run a sizing proposal
 
-## Estructura
+`npm run cli` reads one JSON object from standard input and prints the proposal as JSON. Save an input file such as `case.json`:
+
+```json
+{
+  "body": {
+    "bustOrChestCircumferenceCm": 70,
+    "bicepCircumferenceCm": 26,
+    "armholeDepthCm": 15
+  },
+  "ease": {
+    "bustOrChestCm": 6,
+    "bicepCm": 2,
+    "armholeDepthCm": 1
+  },
+  "toleranceCm": 0.1,
+  "sizeLabel": "M",
+  "construction": {
+    "gauge": { "stitchesPer10Cm": 20, "rowsPer10Cm": 25 },
+    "castOnStitches": 80,
+    "initialSleeveStitches": 10,
+    "increaseEveryRounds": 2,
+    "underarmRange": { "minimum": 0, "maximum": 10 }
+  }
+}
+```
+
+Then run:
+
+```bash
+npm run cli < case.json
+```
+
+The CLI emits a sizing attempt: its input, computed target, proposal, and signed measurement deviations. Positive deviations are larger or longer than the target; negative deviations are smaller or shorter. The proposal and deviations are `null` when no valid construction is found within the selected tolerance and underarm range. Invalid inputs exit with an error.
+
+`npm run demo` remains available as a small executable example with hard-coded values.
+
+## Project structure
 
 ```text
-src/raglan.ts       cálculo y búsqueda del raglán clásico
-src/raglan.test.ts  pruebas del núcleo
-src/demo.ts         ejemplo ejecutable
-docs/               investigación y especificaciones del dominio
-CONTEXT.md          glosario del proyecto
+src/raglan.ts       classic raglan calculations and proposal search
+src/sizing.ts       size-input and sizing-attempt model
+src/feedback.ts     feedback validation and database persistence
+src/server.ts       web server and API endpoints
+src/cli.ts          JSON command-line interface
+public/             browser interface and tester feedback form
+supabase/           database schema
+src/*.test.ts       calculation-core tests
+src/demo.ts         hard-coded executable example
+docs/               domain research and specifications
+CONTEXT.md          project glossary
 ```
 
-Los libros, planillas y patrones utilizados para investigar el dominio viven localmente en `data/` y están excluidos de Git por derechos de autor y privacidad.
+The books, spreadsheets, and patterns used for domain research are intentionally local under `data/` and excluded from Git for privacy and copyright reasons.
 
-## Próximos pasos
+## Deployment and feedback storage
 
-1. Conectar la tabla corporal y las decisiones de holgura con los objetivos de prenda.
-2. Validar el núcleo contra más construcciones raglán reales.
-3. Exponer el cálculo en una interfaz web que muestre la traza de decisiones.
-4. Incorporar fases de aumento solo-cuerpo y solo-manga cuando la evidencia de patrones lo justifique.
+The current deployment target is a Render web service backed by Supabase Postgres. The browser talks only to this application's server; the Supabase secret key must never be included in browser code or committed to Git.
 
-## Investigación
+1. Create a Supabase project and run [`supabase/schema.sql`](supabase/schema.sql) in its SQL editor.
+2. Copy `.env.example` to `.env` for local development and replace its placeholder values. `.env` is ignored by Git.
+3. Choose a private beta code and set it as `TESTER_ACCESS_CODE`. Share only this code—not the database secret—with testers.
+4. In Render, create a Blueprint from this repository. [`render.yaml`](render.yaml) defines the web service and prompts for the three secret environment variables.
+5. Open the deployed URL, calculate a proposal, and save one test response. Its row should appear in the `sizing_feedback` table in Supabase.
 
-Las decisiones de dominio y las fuentes consultadas están documentadas en:
+Each saved row records the algorithm version, original sizing input, server-computed target and proposal, deviations, and tester feedback. The server recomputes the attempt before saving it instead of trusting calculated output from the browser.
 
-- [Investigación inicial de tallaje y graduación](docs/research/2026-09-18-knitwear-sizing-and-grading-sources.md)
-- [Evidencia web sobre grading de prendas tejidas](docs/research/2026-09-18-web-evidence-hand-knitwear-grading-raglan.md)
-- [Especificación del solucionador raglán](docs/specs/raglan-top-down-solver.md)
+## Roadmap
+
+1. Deploy the private tester build and collect structured feedback.
+2. Validate the core against Sofi's sizing guide and further real raglan constructions.
+3. Model a complete designer-facing size definition.
+4. Add body-only and sleeve-only increase phases when pattern evidence supports them.
+
+## Documentation
+
+- [Sizing and grading research](docs/research/2026-09-18-knitwear-sizing-and-grading-sources.md)
+- [Web evidence for hand-knit grading](docs/research/2026-09-18-web-evidence-hand-knitwear-grading-raglan.md)
+- [Top-down raglan solver specification](docs/specs/raglan-top-down-solver.md)
+
+## Contributing
+
+Contributions and domain feedback are welcome once the project has a public contribution guide. For now, please open an issue describing the construction, measurements, gauge, and expected behaviour you want to discuss.
+
+## License
+
+No license has been selected yet. Until one is added, the repository code is not offered for reuse.

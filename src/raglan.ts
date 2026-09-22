@@ -12,6 +12,21 @@ export type ClassicRaglanInput = {
   yokeRounds: number;
 };
 
+export type RaglanIncreaseEvents = {
+  joint: number;
+  bodyOnly: number;
+  sleeveOnly: number;
+};
+
+export type CompoundRaglanInput = {
+  gauge: Gauge;
+  yokeStartStitches: number;
+  increaseEvents: RaglanIncreaseEvents;
+  heldSleeveStitches: number;
+  underarmStitches: number;
+  yokeRounds: number;
+};
+
 export type ClassicRaglanResult = {
   yokeStitches: number;
   bodyStitches: number;
@@ -21,18 +36,32 @@ export type ClassicRaglanResult = {
   yokeDepthCm: number;
 };
 
+export type ClassicRaglanTarget = {
+  bodyCircumferenceCm: number;
+  sleeveCircumferenceCm: number;
+  yokeDepthCm: number;
+  toleranceCm: number;
+};
+
+export type RaglanBodyMeasurements = {
+  bustOrChestCircumferenceCm: number;
+  bicepCircumferenceCm: number;
+  armholeDepthCm: number;
+};
+
+export type RaglanEase = {
+  bustOrChestCm: number;
+  bicepCm: number;
+  armholeDepthCm: number;
+};
+
 export type ClassicRaglanProposalInput = {
   gauge: Gauge;
   castOnStitches: number;
   initialSleeveStitches: number;
   increaseEveryRounds: number;
   underarmRange: { minimum: number; maximum: number };
-  target: {
-    bodyCircumferenceCm: number;
-    sleeveCircumferenceCm: number;
-    yokeDepthCm: number;
-    toleranceCm: number;
-  };
+  target: ClassicRaglanTarget;
 };
 
 export type ClassicRaglanProposal = {
@@ -65,23 +94,74 @@ function nonNegativeNumber(value: number, name: string): void {
   }
 }
 
+function finiteNumber(value: number, name: string): void {
+  if (!Number.isFinite(value)) {
+    throw new Error(`${name} must be a finite number`);
+  }
+}
+
 function stitchesToCm(stitches: number, gauge: number): number {
   return (stitches * 10) / gauge;
+}
+
+export function createClassicRaglanTarget(
+  body: RaglanBodyMeasurements,
+  ease: RaglanEase,
+  toleranceCm: number,
+): ClassicRaglanTarget {
+  positiveNumber(body.bustOrChestCircumferenceCm, "body.bustOrChestCircumferenceCm");
+  positiveNumber(body.bicepCircumferenceCm, "body.bicepCircumferenceCm");
+  positiveNumber(body.armholeDepthCm, "body.armholeDepthCm");
+  finiteNumber(ease.bustOrChestCm, "ease.bustOrChestCm");
+  finiteNumber(ease.bicepCm, "ease.bicepCm");
+  finiteNumber(ease.armholeDepthCm, "ease.armholeDepthCm");
+  nonNegativeNumber(toleranceCm, "toleranceCm");
+
+  return {
+    bodyCircumferenceCm: body.bustOrChestCircumferenceCm + ease.bustOrChestCm,
+    sleeveCircumferenceCm: body.bicepCircumferenceCm + ease.bicepCm,
+    yokeDepthCm: body.armholeDepthCm + ease.armholeDepthCm,
+    toleranceCm,
+  };
 }
 
 export function calculateClassicRaglan(
   input: ClassicRaglanInput,
 ): ClassicRaglanResult {
+  positiveInteger(input.increaseEvents, "increaseEvents");
+
+  return calculateCompoundRaglan({
+    gauge: input.gauge,
+    yokeStartStitches: input.castOnStitches,
+    increaseEvents: {
+      joint: input.increaseEvents,
+      bodyOnly: 0,
+      sleeveOnly: 0,
+    },
+    heldSleeveStitches: input.heldSleeveStitches,
+    underarmStitches: input.underarmStitches,
+    yokeRounds: input.yokeRounds,
+  });
+}
+
+export function calculateCompoundRaglan(
+  input: CompoundRaglanInput,
+): ClassicRaglanResult {
   positiveInteger(input.gauge.stitchesPer10Cm, "stitchesPer10Cm");
   positiveInteger(input.gauge.rowsPer10Cm, "rowsPer10Cm");
-  positiveInteger(input.castOnStitches, "castOnStitches");
-  positiveInteger(input.increaseEvents, "increaseEvents");
+  positiveInteger(input.yokeStartStitches, "yokeStartStitches");
+  nonNegativeInteger(input.increaseEvents.joint, "increaseEvents.joint");
+  nonNegativeInteger(input.increaseEvents.bodyOnly, "increaseEvents.bodyOnly");
+  nonNegativeInteger(input.increaseEvents.sleeveOnly, "increaseEvents.sleeveOnly");
   positiveInteger(input.heldSleeveStitches, "heldSleeveStitches");
   nonNegativeInteger(input.underarmStitches, "underarmStitches");
   positiveInteger(input.yokeRounds, "yokeRounds");
 
-  // ponytail: joint increases only; add phase scheduling when a second pattern requires it.
-  const yokeStitches = input.castOnStitches + input.increaseEvents * 8;
+  const yokeStitches =
+    input.yokeStartStitches +
+    input.increaseEvents.joint * 8 +
+    input.increaseEvents.bodyOnly * 4 +
+    input.increaseEvents.sleeveOnly * 4;
   const sleeveStartStitches = input.heldSleeveStitches + input.underarmStitches;
   const bodyStitches =
     yokeStitches - input.heldSleeveStitches * 2 + input.underarmStitches * 2;

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Purlfect Fit</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header>
+      <p class="eyebrow">Classic top-down raglan</p>
+      <h1>Purlfect Fit</h1>
+      <p>Explorá una propuesta de tallaje y registrá qué ajustarías.</p>
+    </header>
+
+    <main>
+      <form id="sizing-form" class="panel">
+        <section>
+          <h2>Talle y medidas</h2>
+          <div class="grid">
+            <label>Talle <input name="sizeLabel" value="M" required /></label>
+            <label>Busto/pecho corporal (cm) <input name="bust" type="number" step="0.1" value="70" required /></label>
+            <label>Bíceps corporal (cm) <input name="bicep" type="number" step="0.1" value="26" required /></label>
+            <label>Profundidad de sisa (cm) <input name="armhole" type="number" step="0.1" value="15" required /></label>
+          </div>
+        </section>
+
+        <section>
+          <h2>Holgura y tolerancia</h2>
+          <div class="grid">
+            <label>Holgura de cuerpo (cm) <input name="bustEase" type="number" step="0.1" value="6" required /></label>
+            <label>Holgura de bíceps (cm) <input name="bicepEase" type="number" step="0.1" value="2" required /></label>
+            <label>Holgura de sisa (cm) <input name="armholeEase" type="number" step="0.1" value="1" required /></label>
+            <label>Tolerancia (cm) <input name="tolerance" type="number" min="0" step="0.1" value="0.5" required /></label>
+          </div>
+        </section>
+
+        <section>
+          <h2>Muestra y construcción</h2>
+          <div class="grid">
+            <label>Puntos / 10 cm <input name="stitchGauge" type="number" min="1" value="20" required /></label>
+            <label>Vueltas / 10 cm <input name="rowGauge" type="number" min="1" value="25" required /></label>
+            <label>Puntos de montaje <input name="castOn" type="number" min="1" value="80" required /></label>
+            <label>Puntos iniciales por manga <input name="initialSleeve" type="number" min="1" value="10" required /></label>
+            <label>Aumentar cada N vueltas <input name="increaseEvery" type="number" min="1" value="2" required /></label>
+            <label>Bajo axila mínimo <input name="underarmMin" type="number" min="0" value="0" required /></label>
+            <label>Bajo axila máximo <input name="underarmMax" type="number" min="0" value="10" required /></label>
+          </div>
+        </section>
+
+        <button type="submit">Calcular propuesta</button>
+        <p id="form-error" class="error" role="alert"></p>
+      </form>
+
+      <section id="result" class="panel" hidden aria-live="polite"></section>
+
+      <form id="feedback-form" class="panel" hidden>
+        <h2>Feedback de esta prueba</h2>
+        <label>Código de tester <input name="testerCode" type="password" autocomplete="current-password" required /></label>
+        <label>Evaluación
+          <select name="status" required>
+            <option value="">Seleccionar…</option>
+            <option value="accepted">La usaría</option>
+            <option value="needs-adjustment">Necesita ajustes</option>
+            <option value="rejected">No sirve</option>
+          </select>
+        </label>
+        <fieldset>
+          <legend>¿Qué revisarías?</legend>
+          <div class="checks">
+            <label><input type="checkbox" name="focus" value="body" /> Cuerpo</label>
+            <label><input type="checkbox" name="focus" value="sleeve" /> Manga</label>
+            <label><input type="checkbox" name="focus" value="yoke" /> Canesú</label>
+            <label><input type="checkbox" name="focus" value="underarm" /> Bajo axila</label>
+            <label><input type="checkbox" name="focus" value="increases" /> Aumentos</label>
+          </div>
+        </fieldset>
+        <label>Comentario <textarea name="comment" rows="4" placeholder="¿Qué cambiarías y por qué?"></textarea></label>
+        <button type="submit">Guardar feedback</button>
+        <p id="feedback-message" role="status"></p>
+      </form>
+    </main>
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

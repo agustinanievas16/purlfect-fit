@@ -1,7 +1,27 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { calculateClassicRaglan, proposeClassicRaglan } from "./raglan.ts";
+import {
+  calculateCompoundRaglan,
+  calculateClassicRaglan,
+  createClassicRaglanTarget,
+  proposeClassicRaglan,
+} from "./raglan.ts";
+
+test("calculates a compound raglan with body-only increase events", () => {
+  const result = calculateCompoundRaglan({
+    gauge: { stitchesPer10Cm: 18, rowsPer10Cm: 26 },
+    yokeStartStitches: 200,
+    increaseEvents: { joint: 20, bodyOnly: 2, sleeveOnly: 0 },
+    heldSleeveStitches: 76,
+    underarmStitches: 6,
+    yokeRounds: 42,
+  });
+
+  assert.equal(result.yokeStitches, 368);
+  assert.equal(result.bodyStitches, 228);
+  assert.equal(result.sleeveStartStitches, 82);
+});
 
 test("calculates the measurements of a classic raglan construction", () => {
   const result = calculateClassicRaglan({
@@ -52,6 +72,40 @@ test("allows a design with no underarm cast-on stitches", () => {
   assert.equal(result.sleeveStartStitches, 50);
 });
 
+test("creates raglan targets from body measurements and ease", () => {
+  const target = createClassicRaglanTarget(
+    {
+      bustOrChestCircumferenceCm: 90,
+      bicepCircumferenceCm: 30,
+      armholeDepthCm: 20,
+    },
+    { bustOrChestCm: 10, bicepCm: 2, armholeDepthCm: 1.5 },
+    0.5,
+  );
+
+  assert.deepEqual(target, {
+    bodyCircumferenceCm: 100,
+    sleeveCircumferenceCm: 32,
+    yokeDepthCm: 21.5,
+    toleranceCm: 0.5,
+  });
+});
+
+test("allows negative ease", () => {
+  const target = createClassicRaglanTarget(
+    {
+      bustOrChestCircumferenceCm: 90,
+      bicepCircumferenceCm: 30,
+      armholeDepthCm: 20,
+    },
+    { bustOrChestCm: -4, bicepCm: -1, armholeDepthCm: 0 },
+    0.5,
+  );
+
+  assert.equal(target.bodyCircumferenceCm, 86);
+  assert.equal(target.sleeveCircumferenceCm, 29);
+});
+
 test("proposes the construction that meets body, sleeve, and yoke targets", () => {
   const proposal = proposeClassicRaglan({
     gauge: { stitchesPer10Cm: 20, rowsPer10Cm: 25 },
@@ -77,6 +131,35 @@ test("proposes the construction that meets body, sleeve, and yoke targets", () =
       bodyCircumferenceCm: 76,
       sleeveCircumferenceCm: 28,
       yokeDepthCm: 16,
+    },
+  });
+});
+
+test("reconstructs the published size A measurements of the reference raglan", () => {
+  const proposal = proposeClassicRaglan({
+    gauge: { stitchesPer10Cm: 16, rowsPer10Cm: 20 },
+    castOnStitches: 64,
+    initialSleeveStitches: 6,
+    increaseEveryRounds: 2,
+    underarmRange: { minimum: 4, maximum: 4 },
+    target: {
+      bodyCircumferenceCm: 90,
+      sleeveCircumferenceCm: 32.5,
+      yokeDepthCm: 21,
+      toleranceCm: 0,
+    },
+  });
+
+  assert.deepEqual(proposal, {
+    increaseEvents: 21,
+    underarmStitches: 4,
+    result: {
+      yokeStitches: 232,
+      bodyStitches: 144,
+      sleeveStartStitches: 52,
+      bodyCircumferenceCm: 90,
+      sleeveCircumferenceCm: 32.5,
+      yokeDepthCm: 21,
     },
   });
 });

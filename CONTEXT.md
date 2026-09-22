@@ -4,6 +4,22 @@
 
 Una opción dentro de un rango de talles. Es una etiqueta de comunicación (por ejemplo, M o 3XL), no una medida ni una garantía de ajuste.
 
+## Entrada de talle raglán clásico
+
+Datos necesarios para solicitar una propuesta de talle en la construcción raglán clásica: etiqueta, medidas corporales, holgura, tensión y restricciones de construcción.
+
+## Prueba de tallaje
+
+Foto trazable de una entrada de talle, sus medidas terminadas calculadas y la propuesta que produce el modelo. Es la unidad a la que se asocia feedback, no el talle en abstracto. Evitar: iteración, porque puede confundirse con una vuelta de tejido.
+
+## Feedback de prueba
+
+Evaluación humana de una prueba de tallaje, con un resultado y observaciones sobre el cuerpo, mangas, canesú, bajo axila o aumentos.
+
+## Desvío de medida
+
+Diferencia en centímetros entre una medida resultante de la propuesta y su objetivo. Un valor positivo indica que el resultado es mayor; uno negativo, que es menor.
+
 ## Tabla corporal
 
 Conjunto versionado de medidas corporales de referencia para cada talle y una población o propósito declarados. No es una verdad universal.
