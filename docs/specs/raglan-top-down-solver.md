@@ -12,17 +12,20 @@ Su interfaz debe ser pequeña: `proponerRaglan(especificación) → propuesta | 
 - Cuatro uniones raglán simétricas.
 - Eventos de aumento raglán conjuntos: cada uno agrega ocho puntos, cuatro al cuerpo y dos a cada manga.
 - Separación de mangas con el mismo número de puntos bajo axila en ambos lados.
-- Cuello y short rows opcionales como configuración; no se resuelven automáticamente todavía.
+- Escote circular sin formación diferencial, con la misma tensión que el tejido principal.
+- Puntos de línea de raglán simétricos que permanecen en el cuerpo al separar.
 
-Fuera de alcance: colorwork, calados o trenzas que impongan múltiplos, pinzas, mangas asimétricas, cardigan y raglán bottom-up.
+Fuera de alcance: formación de escote en plano, short rows, colorwork, calados o trenzas con restricciones adicionales, pinzas, mangas asimétricas, cardigan y raglán bottom-up.
 
 ## Especificación de entrada
 
 ### Por diseño
 
 - Muestra bloqueada: puntos/10 cm y vueltas/10 cm.
-- Medida de cuello o puntos de montaje, y reparto inicial entre cuerpo/mangas.
-- Ritmo permitido de aumentos (por ejemplo, cada dos vueltas) y short rows opcionales.
+- Contorno terminado de escote.
+- Múltiplo requerido para el total de puntos de montaje.
+- Puntos reservados para cada una de las cuatro líneas de raglán.
+- Ritmo permitido de aumentos (por ejemplo, cada dos vueltas).
 - Política de puntos bajo axila: valor elegido, rango permitido o "proponer".
 - Tolerancia máxima de desviación entre medida terminada objetivo y medida resultante.
 
@@ -39,6 +42,15 @@ Fuera de alcance: colorwork, calados o trenzas que impongan múltiplos, pinzas, 
 Sea `N` la cantidad de eventos conjuntos y `U` los puntos bajo **cada** axila. Para una construcción simétrica:
 
 ```text
+puntos teóricos de montaje =
+  contorno terminado de escote × puntos por 10 cm ÷ 10
+
+puntos de montaje propuestos =
+  entero compatible con el múltiplo y la tolerancia
+
+reparto inicial =
+  delantero + espalda + 2 × manga + 4 × puntos de línea
+
 puntos de canesú final =
   puntos de montaje + 8 × N
 
@@ -56,6 +68,8 @@ profundidad de canesú = vueltas ÷ (vueltas por 10 cm) × 10
 ```
 
 El resultado debe conservar simetría izquierda/derecha, tener todos los conteos enteros y explicar el error residual en centímetros. Una propuesta no es válida si el ritmo de aumentos excede las vueltas disponibles para la profundidad de canesú.
+
+El delantero y la espalda comienzan con el mismo conteo en esta plantilla circular. Los puntos de las cuatro líneas de raglán no se incluyen en esos conteos iniciales y permanecen en el cuerpo al separar las mangas.
 
 `U` no representa valores distintos para cuerpo y manga: es el mismo grupo de puntos montado bajo cada axila, visto desde las dos piezas. La política de puntos bajo axila define cómo elegir ese único valor compartido:
 

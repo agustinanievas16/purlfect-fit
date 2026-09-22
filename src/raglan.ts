@@ -70,6 +70,25 @@ export type ClassicRaglanProposal = {
   result: ClassicRaglanResult;
 };
 
+export type ClassicRaglanDesignInput = {
+  gauge: Gauge;
+  finishedNeckCircumferenceCm: number;
+  castOnMultiple: number;
+  raglanLineStitchesEach: number;
+  increaseEveryRounds: number;
+  underarmRange: { minimum: number; maximum: number };
+  target: ClassicRaglanTarget;
+};
+
+export type ClassicRaglanDesignProposal = ClassicRaglanProposal & {
+  castOnStitches: number;
+  initialFrontStitches: number;
+  initialBackStitches: number;
+  initialSleeveStitchesEach: number;
+  raglanLineStitchesEach: number;
+  neckCircumferenceCm: number;
+};
+
 function positiveInteger(value: number, name: string): void {
   if (!Number.isInteger(value) || value <= 0) {
     throw new Error(`${name} must be a positive integer`);
@@ -244,6 +263,115 @@ export function proposeClassicRaglan(
         totalDeviation < bestDeviation
       ) {
         best = { increaseEvents, underarmStitches, result };
+        bestDeviation = totalDeviation;
+      }
+    }
+  }
+
+  return best;
+}
+
+export function proposeClassicRaglanDesign(
+  input: ClassicRaglanDesignInput,
+): ClassicRaglanDesignProposal | undefined {
+  positiveInteger(input.gauge.stitchesPer10Cm, "stitchesPer10Cm");
+  positiveInteger(input.gauge.rowsPer10Cm, "rowsPer10Cm");
+  positiveNumber(
+    input.finishedNeckCircumferenceCm,
+    "finishedNeckCircumferenceCm",
+  );
+  positiveInteger(input.castOnMultiple, "castOnMultiple");
+  nonNegativeInteger(
+    input.raglanLineStitchesEach,
+    "raglanLineStitchesEach",
+  );
+  positiveInteger(input.increaseEveryRounds, "increaseEveryRounds");
+  nonNegativeInteger(input.underarmRange.minimum, "underarmRange.minimum");
+  nonNegativeInteger(input.underarmRange.maximum, "underarmRange.maximum");
+  positiveNumber(input.target.bodyCircumferenceCm, "target.bodyCircumferenceCm");
+  positiveNumber(input.target.sleeveCircumferenceCm, "target.sleeveCircumferenceCm");
+  positiveNumber(input.target.yokeDepthCm, "target.yokeDepthCm");
+  nonNegativeNumber(input.target.toleranceCm, "target.toleranceCm");
+
+  if (input.underarmRange.minimum > input.underarmRange.maximum) {
+    throw new Error("underarmRange.minimum must not exceed underarmRange.maximum");
+  }
+
+  const minimumCastOn = Math.max(
+    1,
+    Math.ceil(
+      ((input.finishedNeckCircumferenceCm - input.target.toleranceCm) *
+        input.gauge.stitchesPer10Cm) /
+        10 -
+        Number.EPSILON,
+    ),
+  );
+  const maximumCastOn = Math.floor(
+    ((input.finishedNeckCircumferenceCm + input.target.toleranceCm) *
+      input.gauge.stitchesPer10Cm) /
+      10 +
+      Number.EPSILON,
+  );
+  const raglanLineStitches = input.raglanLineStitchesEach * 4;
+  let best: ClassicRaglanDesignProposal | undefined;
+  let bestDeviation = Infinity;
+
+  // ponytail: these MVP ranges are tiny; replace exhaustive search only if real inputs prove otherwise.
+  for (
+    let castOnStitches = minimumCastOn;
+    castOnStitches <= maximumCastOn;
+    castOnStitches += 1
+  ) {
+    if (castOnStitches % input.castOnMultiple !== 0) continue;
+
+    const sectionStitches = castOnStitches - raglanLineStitches;
+    for (
+      let initialSleeveStitches = 1;
+      initialSleeveStitches * 2 < sectionStitches;
+      initialSleeveStitches += 1
+    ) {
+      const frontAndBackStitches =
+        sectionStitches - initialSleeveStitches * 2;
+      if (frontAndBackStitches < 2 || frontAndBackStitches % 2 !== 0) {
+        continue;
+      }
+
+      const construction = proposeClassicRaglan({
+        gauge: input.gauge,
+        castOnStitches,
+        initialSleeveStitches,
+        increaseEveryRounds: input.increaseEveryRounds,
+        underarmRange: input.underarmRange,
+        target: input.target,
+      });
+      if (!construction) continue;
+
+      const neckCircumferenceCm = stitchesToCm(
+        castOnStitches,
+        input.gauge.stitchesPer10Cm,
+      );
+      const totalDeviation =
+        Math.abs(neckCircumferenceCm - input.finishedNeckCircumferenceCm) +
+        Math.abs(
+          construction.result.bodyCircumferenceCm -
+            input.target.bodyCircumferenceCm,
+        ) +
+        Math.abs(
+          construction.result.sleeveCircumferenceCm -
+            input.target.sleeveCircumferenceCm,
+        ) +
+        Math.abs(construction.result.yokeDepthCm - input.target.yokeDepthCm);
+
+      if (totalDeviation < bestDeviation) {
+        best = {
+          castOnStitches,
+          initialFrontStitches: frontAndBackStitches / 2,
+          initialBackStitches: frontAndBackStitches / 2,
+          initialSleeveStitchesEach: initialSleeveStitches,
+          raglanLineStitchesEach: input.raglanLineStitchesEach,
+          neckCircumferenceCm,
+          ...construction,
+        };
         bestDeviation = totalDeviation;
       }
     }

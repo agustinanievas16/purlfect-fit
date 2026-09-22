@@ -1,8 +1,8 @@
 import {
   createClassicRaglanTarget,
-  proposeClassicRaglan,
-  type ClassicRaglanProposal,
-  type ClassicRaglanProposalInput,
+  proposeClassicRaglanDesign,
+  type ClassicRaglanDesignInput,
+  type ClassicRaglanDesignProposal,
   type ClassicRaglanTarget,
   type RaglanBodyMeasurements,
   type RaglanEase,
@@ -13,18 +13,23 @@ export type ClassicRaglanSizeInput = {
   body: RaglanBodyMeasurements;
   ease: RaglanEase;
   toleranceCm: number;
-  construction: Omit<ClassicRaglanProposalInput, "target">;
+  construction: Omit<ClassicRaglanDesignInput, "target">;
+};
+
+export type ClassicRaglanSizeTarget = ClassicRaglanTarget & {
+  neckCircumferenceCm: number;
 };
 
 export type FeedbackStatus = "accepted" | "needs-adjustment" | "rejected";
 
 export type SizingFeedback = {
   status: FeedbackStatus;
-  focus?: Array<"body" | "sleeve" | "yoke" | "underarm" | "increases">;
+  focus?: Array<"neck" | "body" | "sleeve" | "yoke" | "underarm" | "increases">;
   comment?: string;
 };
 
 export type SizingDeviations = {
+  neckCircumferenceCm: number;
   bodyCircumferenceCm: number;
   sleeveCircumferenceCm: number;
   yokeDepthCm: number;
@@ -32,8 +37,8 @@ export type SizingDeviations = {
 
 export type SizingAttempt = {
   input: ClassicRaglanSizeInput;
-  target: ClassicRaglanTarget;
-  proposal: ClassicRaglanProposal | undefined;
+  target: ClassicRaglanSizeTarget;
+  proposal: ClassicRaglanDesignProposal | undefined;
   deviations: SizingDeviations | undefined;
   feedback?: SizingFeedback;
 };
@@ -49,12 +54,14 @@ export function createSizingAttempt(
     throw new Error("sizeLabel must not be empty");
   }
 
-  const target = createClassicRaglanTarget(
-    input.body,
-    input.ease,
-    input.toleranceCm,
-  );
-  const proposal = proposeClassicRaglan({ ...input.construction, target });
+  const target = {
+    ...createClassicRaglanTarget(input.body, input.ease, input.toleranceCm),
+    neckCircumferenceCm: input.construction.finishedNeckCircumferenceCm,
+  };
+  const proposal = proposeClassicRaglanDesign({
+    ...input.construction,
+    target,
+  });
 
   return {
     input,
@@ -62,6 +69,10 @@ export function createSizingAttempt(
     proposal,
     deviations: proposal
       ? {
+          neckCircumferenceCm: cmDifference(
+            proposal.neckCircumferenceCm,
+            target.neckCircumferenceCm,
+          ),
           bodyCircumferenceCm: cmDifference(
             proposal.result.bodyCircumferenceCm,
             target.bodyCircumferenceCm,

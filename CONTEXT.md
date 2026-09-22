@@ -40,6 +40,22 @@ Diferencia intencional entre una medida corporal y la medida terminada de prenda
 
 Medición de puntos y vueltas por longitud, tomada del tejido de referencia en un estado declarado —en particular, tras bloqueo/lavado cuando corresponda.
 
+## Contorno terminado de escote
+
+Medida objetivo de la abertura de la prenda terminada y bloqueada. Es una decisión de diseño y no equivale necesariamente al contorno corporal del cuello. En la primera plantilla usa la misma muestra de tensión que el tejido principal.
+
+## Múltiplo de montaje
+
+Restricción que exige que el total de puntos montados sea divisible por un entero, por ejemplo 2 para elástico 1×1 o 4 para elástico 2×2. No es un conteo de puntos propuesto.
+
+## Puntos de línea de raglán
+
+Puntos reservados para cada una de las cuatro líneas que separan inicialmente delantero, espalda y mangas. La primera plantilla asigna la misma cantidad a cada línea y los conserva en el cuerpo al separar las mangas.
+
+## Reparto inicial
+
+Distribución propuesta de los puntos de montaje entre delantero, espalda, ambas mangas y las cuatro líneas de raglán. Es un resultado técnico del solucionador, no una medida que la diseñadora deba calcular de antemano.
+
 ## Plantilla de construcción
 
 Familia de reglas que convierte medidas terminadas en instrucciones construibles. El MVP comienza con sweater raglán top-down; una plantilla no representa a todas las construcciones.

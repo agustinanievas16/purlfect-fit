@@ -19,8 +19,9 @@ const input: ClassicRaglanSizeInput = {
   toleranceCm: 0.5,
   construction: {
     gauge: { stitchesPer10Cm: 20, rowsPer10Cm: 25 },
-    castOnStitches: 80,
-    initialSleeveStitches: 10,
+    finishedNeckCircumferenceCm: 40,
+    castOnMultiple: 4,
+    raglanLineStitchesEach: 1,
     increaseEveryRounds: 2,
     underarmRange: { minimum: 0, maximum: 10 },
   },
@@ -47,7 +48,7 @@ test("rejects feedback values outside the supported vocabulary", () => {
     /status is invalid/,
   );
   assert.throws(
-    () => parseSizingFeedback({ status: "accepted", focus: ["neck"] }),
+    () => parseSizingFeedback({ status: "accepted", focus: ["waist"] }),
     /focus is invalid/,
   );
 });

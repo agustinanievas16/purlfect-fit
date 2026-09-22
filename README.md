@@ -18,7 +18,8 @@ The goal is to make those decisions explicit, reproducible, and inspectable befo
 - Verifies known compound raglan constructions with joint, body-only, and sleeve-only increase events.
 - Groups a labelled size input, its body measurements, ease, gauge, and construction constraints.
 - Builds garment targets from body measurements and ease.
-- Searches for a compatible number of joint raglan increase events and underarm cast-on stitches.
+- Proposes cast-on stitches and an initial front, back, sleeve, and raglan-line distribution from a finished neckline target.
+- Searches for compatible joint raglan increase events and underarm cast-on stitches.
 - Reports signed centimetre deviations between the proposal and each target measurement.
 - Returns `null` when the defined construction constraints cannot meet the target.
 - Saves every sizing attempt and attaches structured tester feedback to the same Supabase row.
@@ -81,8 +82,9 @@ npm test
   "sizeLabel": "M",
   "construction": {
     "gauge": { "stitchesPer10Cm": 20, "rowsPer10Cm": 25 },
-    "castOnStitches": 80,
-    "initialSleeveStitches": 10,
+    "finishedNeckCircumferenceCm": 40,
+    "castOnMultiple": 4,
+    "raglanLineStitchesEach": 1,
     "increaseEveryRounds": 2,
     "underarmRange": { "minimum": 0, "maximum": 10 }
   }
@@ -95,7 +97,7 @@ Then run:
 npm run cli < case.json
 ```
 
-The CLI emits a sizing attempt: its input, computed target, proposal, and signed measurement deviations. Positive deviations are larger or longer than the target; negative deviations are smaller or shorter. The proposal and deviations are `null` when no valid construction is found within the selected tolerance and underarm range. Invalid inputs exit with an error.
+The CLI emits a sizing attempt: its input, computed target, proposal, and signed measurement deviations. Positive deviations are larger or longer than the target; negative deviations are smaller or shorter. The proposal and deviations are `null` when neckline multiple, tolerance, yoke rhythm, or underarm constraints cannot produce a compatible construction. Invalid inputs exit with an error.
 
 `npm run demo` remains available as a small executable example with hard-coded values.
 

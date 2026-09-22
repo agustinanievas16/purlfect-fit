@@ -6,6 +6,7 @@ import {
   calculateClassicRaglan,
   createClassicRaglanTarget,
   proposeClassicRaglan,
+  proposeClassicRaglanDesign,
 } from "./raglan.ts";
 
 test("calculates a compound raglan with body-only increase events", () => {
@@ -133,6 +134,61 @@ test("proposes the construction that meets body, sleeve, and yoke targets", () =
       yokeDepthCm: 16,
     },
   });
+});
+
+test("proposes cast-on and initial sections from the neckline design", () => {
+  const proposal = proposeClassicRaglanDesign({
+    gauge: { stitchesPer10Cm: 20, rowsPer10Cm: 25 },
+    finishedNeckCircumferenceCm: 40,
+    castOnMultiple: 4,
+    raglanLineStitchesEach: 1,
+    increaseEveryRounds: 2,
+    underarmRange: { minimum: 0, maximum: 10 },
+    target: {
+      bodyCircumferenceCm: 76,
+      sleeveCircumferenceCm: 28,
+      yokeDepthCm: 16,
+      toleranceCm: 0.1,
+    },
+  });
+
+  assert.deepEqual(proposal, {
+    castOnStitches: 80,
+    initialFrontStitches: 28,
+    initialBackStitches: 28,
+    initialSleeveStitchesEach: 10,
+    raglanLineStitchesEach: 1,
+    neckCircumferenceCm: 40,
+    increaseEvents: 20,
+    underarmStitches: 6,
+    result: {
+      yokeStitches: 240,
+      bodyStitches: 152,
+      sleeveStartStitches: 56,
+      bodyCircumferenceCm: 76,
+      sleeveCircumferenceCm: 28,
+      yokeDepthCm: 16,
+    },
+  });
+});
+
+test("returns no design when the cast-on multiple exceeds neck tolerance", () => {
+  const proposal = proposeClassicRaglanDesign({
+    gauge: { stitchesPer10Cm: 20, rowsPer10Cm: 25 },
+    finishedNeckCircumferenceCm: 41,
+    castOnMultiple: 4,
+    raglanLineStitchesEach: 1,
+    increaseEveryRounds: 2,
+    underarmRange: { minimum: 0, maximum: 10 },
+    target: {
+      bodyCircumferenceCm: 76,
+      sleeveCircumferenceCm: 28,
+      yokeDepthCm: 16,
+      toleranceCm: 0.1,
+    },
+  });
+
+  assert.equal(proposal, undefined);
 });
 
 test("reconstructs the published size A measurements of the reference raglan", () => {

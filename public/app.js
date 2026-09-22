@@ -31,8 +31,9 @@ function buildInput(data) {
         stitchesPer10Cm: number(data, "stitchGauge"),
         rowsPer10Cm: number(data, "rowGauge"),
       },
-      castOnStitches: number(data, "castOn"),
-      initialSleeveStitches: number(data, "initialSleeve"),
+      finishedNeckCircumferenceCm: number(data, "neckCircumference"),
+      castOnMultiple: number(data, "castOnMultiple"),
+      raglanLineStitchesEach: number(data, "raglanLineStitches"),
       increaseEveryRounds: number(data, "increaseEvery"),
       underarmRange: {
         minimum: number(data, "underarmMin"),
@@ -53,9 +54,14 @@ function renderAttempt(attempt) {
     const { proposal, target, deviations } = attempt;
     result.innerHTML = `<h2>Propuesta para el talle ${escapeHtml(attempt.input.sizeLabel)}</h2>
       <div class="metrics">
+        ${metric("Escote", target.neckCircumferenceCm, proposal.neckCircumferenceCm, deviations.neckCircumferenceCm)}
         ${metric("Cuerpo", target.bodyCircumferenceCm, proposal.result.bodyCircumferenceCm, deviations.bodyCircumferenceCm)}
         ${metric("Manga", target.sleeveCircumferenceCm, proposal.result.sleeveCircumferenceCm, deviations.sleeveCircumferenceCm)}
         ${metric("Canesú", target.yokeDepthCm, proposal.result.yokeDepthCm, deviations.yokeDepthCm)}
+        <div class="metric"><span>Puntos de montaje</span><strong>${proposal.castOnStitches}</strong></div>
+        <div class="metric"><span>Delantero / espalda inicial</span><strong>${proposal.initialFrontStitches} / ${proposal.initialBackStitches}</strong></div>
+        <div class="metric"><span>Puntos iniciales por manga</span><strong>${proposal.initialSleeveStitchesEach}</strong></div>
+        <div class="metric"><span>Puntos por línea de raglán</span><strong>${proposal.raglanLineStitchesEach}</strong></div>
         <div class="metric"><span>Eventos de aumento</span><strong>${proposal.increaseEvents}</strong></div>
         <div class="metric"><span>Puntos bajo cada axila</span><strong>${proposal.underarmStitches}</strong></div>
       </div>`;

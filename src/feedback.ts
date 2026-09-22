@@ -1,7 +1,7 @@
 import type { SizingAttempt, SizingFeedback } from "./sizing.ts";
 
 const feedbackStatuses = ["accepted", "needs-adjustment", "rejected"] as const;
-const feedbackFocuses = ["body", "sleeve", "yoke", "underarm", "increases"] as const;
+const feedbackFocuses = ["neck", "body", "sleeve", "yoke", "underarm", "increases"] as const;
 
 type SizingStoreConfig = {
   supabaseUrl: string | undefined;
