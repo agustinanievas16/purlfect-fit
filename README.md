@@ -123,9 +123,8 @@ The current deployment target is a Render web service backed by Supabase Postgre
 
 1. Create a Supabase project and run [`supabase/schema.sql`](supabase/schema.sql) in its SQL editor.
 2. Copy `.env.example` to `.env` for local development and replace its placeholder values. `.env` is ignored by Git.
-3. Choose a private beta code and set it as `TESTER_ACCESS_CODE`. Share only this code—not the database secret—with testers.
-4. In Render, create a Blueprint from this repository. [`render.yaml`](render.yaml) defines the web service and prompts for the three secret environment variables.
-5. Open the deployed URL, calculate a proposal, and save one test response. Its row should appear in the `sizing_feedback` table in Supabase.
+3. In Render, create a Blueprint from this repository. [`render.yaml`](render.yaml) defines the web service and prompts for the two Supabase environment variables.
+4. Open the deployed URL, calculate a proposal, and save one test response. Its row should appear in the `sizing_feedback` table in Supabase.
 
 Each saved row records the algorithm version, original sizing input, server-computed target and proposal, deviations, and tester feedback. The server recomputes the attempt before saving it instead of trusting calculated output from the browser.
 

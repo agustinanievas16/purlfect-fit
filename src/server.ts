@@ -1,5 +1,4 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
-import { timingSafeEqual } from "node:crypto";
 import { readFile } from "node:fs/promises";
 
 import { parseSizingFeedback, saveSizingFeedback } from "./feedback.ts";
@@ -28,19 +27,6 @@ async function readJson<T>(request: IncomingMessage): Promise<T> {
   return JSON.parse(body) as T;
 }
 
-function hasValidTesterCode(request: IncomingMessage): boolean {
-  const expected = process.env.TESTER_ACCESS_CODE;
-  const received = request.headers["x-tester-code"];
-  if (!expected || typeof received !== "string") return false;
-
-  const expectedBytes = Buffer.from(expected);
-  const receivedBytes = Buffer.from(received);
-  return (
-    expectedBytes.length === receivedBytes.length &&
-    timingSafeEqual(expectedBytes, receivedBytes)
-  );
-}
-
 const server = createServer(async (request, response) => {
   try {
     if (request.method === "POST" && request.url === "/api/sizing-attempt") {
@@ -56,11 +42,6 @@ const server = createServer(async (request, response) => {
     }
 
     if (request.method === "POST" && request.url === "/api/feedback") {
-      if (!hasValidTesterCode(request)) {
-        sendJson(response, 401, { error: "El código de tester no es válido." });
-        return;
-      }
-
       const submission = await readJson<{
         input: ClassicRaglanSizeInput;
         feedback: unknown;

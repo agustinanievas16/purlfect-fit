@@ -3,10 +3,7 @@ const feedbackForm = document.querySelector("#feedback-form");
 const result = document.querySelector("#result");
 const formError = document.querySelector("#form-error");
 const feedbackMessage = document.querySelector("#feedback-message");
-const testerCode = feedbackForm.elements.namedItem("testerCode");
 let currentAttempt;
-
-testerCode.value = sessionStorage.getItem("purlfect-fit-tester-code") ?? "";
 
 const number = (data, name) => Number(data.get(name));
 const format = (value) => new Intl.NumberFormat("es-AR", { maximumFractionDigits: 3 }).format(value);
@@ -97,10 +94,7 @@ feedbackForm.addEventListener("submit", async (event) => {
   try {
     const response = await fetch("/api/feedback", {
       method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-tester-code": data.get("testerCode"),
-      },
+      headers: { "content-type": "application/json" },
       body: JSON.stringify({
         input: currentAttempt.input,
         feedback: {
@@ -115,9 +109,7 @@ feedbackForm.addEventListener("submit", async (event) => {
 
     feedbackMessage.className = "success";
     feedbackMessage.textContent = "Feedback guardado. Ya está disponible para el equipo.";
-    sessionStorage.setItem("purlfect-fit-tester-code", data.get("testerCode"));
     feedbackForm.reset();
-    testerCode.value = sessionStorage.getItem("purlfect-fit-tester-code") ?? "";
   } catch (error) {
     feedbackMessage.className = "error";
     feedbackMessage.textContent = error.message ?? "No se pudo guardar el feedback.";
